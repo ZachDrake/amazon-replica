@@ -1,0 +1,24 @@
+{
+  "name": "amazon-replica",
+  "version": "1.0.0",
+  "description": "An Amazon-like storefront using  MySQL. The app takes in orders from customers and deplete stock from the store's inventory.",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZachDrake/amazon-replica.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZachDrake/amazon-replica/issues"
+  },
+  "homepage": "https://github.com/ZachDrake/amazon-replica#readme",
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "requirer": "0.0.4"
+  }
+}
