@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ZachDrake/amazon-replica#readme",
   "dependencies": {
+    "inquirer": "^6.3.1",
     "mysql": "^2.16.0",
     "requirer": "0.0.4"
   }
