@@ -4,8 +4,8 @@ var mysql = require("mysql");
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
-  user: "root",
-  password: "root",
+  user: "basic",
+  password: "basic",
   database: "bamazonDB"
 });
 
@@ -26,7 +26,7 @@ function main() {
         choices: [
           "View Products for Sale",
           "View Low Inventory",
-          "Add to Inventory (NOT WORKING)",
+          "Add to Inventory",
           "Add New Product",
           "Exit"
         ],
@@ -42,11 +42,11 @@ function main() {
           lowInventory();
           break;
         case "Add to Inventory":
-          main();
-          // addInventory();
+          addInventory();
           break;
-        case "Add New Product":
-        addNewProduct();
+        case "Add New Product (NOT WORKING)":
+        main();
+          // addNewProduct();
           break;
         case "Exit":
           connection.end();
@@ -78,7 +78,7 @@ function displayProducts() {
           res[i].price +
           " | " +
           "In Stock: " +
-          res[i].stock_quanity +
+          res[i].stock_quantity +
           "\n"
       );
     }
@@ -87,50 +87,71 @@ function displayProducts() {
 }
 
 function lowInventory() {
-  connection.query("SELECT * FROM products where stock_quanity < 5", function(
+  connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(
     error,
     res
   ) {
     if (error) {
       console.log(error);
     }
-    displayProducts();
+    for (var i = 0; i < res.length; i++) {
+      console.log("--------------------------------");
+      console.log("These items need to be restocked:");
+      console.log(
+        "Id: " +
+          res[i].item_id +
+          " Product: " +
+          res[i].product_name +
+          " Remaining quantity in stock: " +
+          res[i].stock_quantity
+      );
+      console.log("--------------------------------");
+    }
+    main();
   });
 }
 
 // INVENTORY DOES NOT UPDATE, ONLY REPLACES
 // function addInventory() {
-//   inquirer
-//   .prompt([
-//     {
-//       type: "input",
-//       message: "Which item's inventory would you like to add to?",
-//       name: "name" 
-//     },
-//     {
-//       type: "input",
-//       message: "How many would you like to add?",
-//       name: "add"
+//   connection.query("SELECT * FROM products", function(err, res) {
+//     var productNameArray = [];
+//     for (var i = 0; i < res.length; i++) {
+//       productNameArray.push(res[i].product_name);
 //     }
-//   ]).then(function(response){
-//     connection.query(
-//       "UPDATE products SET ? WHERE ?",
-//       [
-//         {
-//           stock_quanity: stock_quanity + response.add
-//         },
-//         {
-//           product_name: response.name
-//         }
-//       ],
-//       function(err, res){
-//         if (err) {
-//           console.log(err);
-//         }
-//         displayProducts();
+//     inquirer
+//     .prompt([
+//       {
+//         type: "list",
+//         message: "Which item's inventory would you like to add to?",
+//         choices: productNameArray,
+//         name: "name"
+//       },
+//       {
+//         type: "input",
+//         message: "How many would you like to add?",
+//         name: "add"
 //       }
-//     )
-//   })
+//     ])
+//     .then(function(response) {
+//       connection.query(
+//         "UPDATE products SET ? WHERE ?",
+//         [
+//           {
+//             stock_quantity: response.add
+//           },
+//           {
+//             product_name: response.name
+//           }
+//         ],
+//         function(err, res) {
+//           if (err) {
+//             console.log(err);
+//           }
+//           main();
+//         }
+//         );
+//       });
+//     });
 // }
 
 function addNewProduct() {
@@ -153,8 +174,8 @@ function addNewProduct() {
       },
       {
         type: "input",
-        message: "Stock quanity",
-        name: "quanity"
+        message: "Stock quantity",
+        name: "quantity"
       }
     ])
     .then(function(response) {
@@ -164,7 +185,7 @@ function addNewProduct() {
           product_name: response.name,
           department_name: response.department,
           price: response.price,
-          stock_quanity: response.quanity
+          stock_quantity: response.quantity
         },
         function(err, res) {
           if (err) {

@@ -4,8 +4,8 @@ var mysql = require("mysql");
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
-  user: "root",
-  password: "root",
+  user: "basic",
+  password: "basic",
   database: "bamazonDB"
 });
 
@@ -36,7 +36,7 @@ function displayProducts() {
           res[i].price +
           " | " +
           "In Stock: " +
-          res[i].stock_quanity +
+          res[i].stock_quantity +
           "\n"
       );
     }
@@ -56,35 +56,40 @@ function userPrompt() {
       {
         type: "input",
         message: "How many would you like to purchase?",
-        name: "quanity"
+        name: "quantity"
       }
     ])
     .then(function(input) {
       var query = "SELECT * FROM products WHERE item_id = ?";
-      connection.query(query, [input.id], function(error, res) {
-        if (error) {
-          console.log(error);
+      connection.query(query, [input.id], function(err, res) {
+        if (err) {
+          console.log(err);
         }
-        var newStockquanity;
+        var newStockquantity;
         var item;
         var price;
         for (var i = 0; i < res.length; i++) {
           item = res[i].item_id;
-          if (res[i].stock_quanity < input.quanity) {
+          if (res[i].stock_quantity < input.quantity) {
+            displayProducts();
+            console.log("--------------------------------");
             console.log("Insufficient Quantity!");
+            console.log("--------------------------------");
+            
           } else {
-            newStockquanity = res[i].stock_quanity - input.quanity;
-            price = res[i].price * input.quanity;
-            updateQuanity();
+            newStockquantity = res[i].stock_quantity - input.quantity;
+            price = res[i].price * input.quantity;
+            updateQuantity();
+            console.log("--------------------------------");
+            console.log("Total cost of purchase " + price);
+            console.log("--------------------------------");
           }
         }
-   
-        console.log("Total cost of purchase " + price);
 
-        function updateQuanity() {
-          var query = connection.query(
+        function updateQuantity() {
+          connection.query(
             "UPDATE products SET ? WHERE ?",
-            [{ stock_quanity: newStockquanity }, { item_id: item }],
+            [{ stock_quantity: newStockquantity }, { item_id: item }],
             function(err, res) {
               if (err) {
                 console.log(err);
@@ -96,22 +101,23 @@ function userPrompt() {
         }
 
         function control() {
-          inquirer.prompt([
-            {
-              type: "list",
-              message: "Would you like to make another purchase?",
-              choices: ["Make another purchase", "Exit"],
-              name: "control"
-            }
-          ]).then(function(response){
-            if (response.control === "Make another purchase"){
-              userPrompt();
-            } else {
-              connection.end();
-            }
-          });
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                message: "Would you like to make another purchase?",
+                choices: ["Make another purchase", "Exit"],
+                name: "control"
+              }
+            ])
+            .then(function(response) {
+              if (response.control === "Make another purchase") {
+                displayProducts();
+              } else {
+                connection.end();
+              }
+            });
         }
-
       });
     });
 }
