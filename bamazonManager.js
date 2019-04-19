@@ -41,12 +41,12 @@ function main() {
         case "View Low Inventory":
           lowInventory();
           break;
-        case "Add to Inventory":
-          addInventory();
+        case "Add to Inventory (NOT WORKING)":
+          main();
+          // addInventory();
           break;
-        case "Add New Product (NOT WORKING)":
-        main();
-          // addNewProduct();
+        case "Add New Product":
+          addNewProduct();
           break;
         case "Exit":
           connection.end();
